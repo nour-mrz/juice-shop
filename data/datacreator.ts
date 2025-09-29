@@ -516,13 +516,27 @@ async function createAnonymousFeedback () {
     feedbacks.map(async (feedback) => await createFeedback(null, feedback.comment, feedback.rating))
   )
 }
-
+/*
 async function createFeedback (UserId: number | null, comment: string, rating: number, author?: string) {
   const authoredComment = author ? `${comment} (***${author.slice(3)})` : `${comment} (anonymous)`
   return await FeedbackModel.create({ UserId, comment: authoredComment, rating }).catch((err: unknown) => {
     logger.error(`Could not insert Feedback ${authoredComment} mapped to UserId ${UserId}: ${utils.getErrorMessage(err)}`)
   })
+}*/async function createFeedback (UserId: number | null, comment: string, rating: number, author?: string) {
+  //  Validation de la note
+  if (rating < 1 || rating > 5) {
+    throw new Error('Invalid rating. Must be between 1 and 5.')
+  }
+
+  const authoredComment = author ? `${comment} (***${author.slice(3)})` : `${comment} (anonymous)`
+  
+  return await FeedbackModel.create({ UserId, comment: authoredComment, rating }).catch((err: unknown) => {
+    logger.error(`Could not insert Feedback ${authoredComment} mapped to UserId ${UserId}: ${utils.getErrorMessage(err)}`)
+  })
 }
+
+
+
 
 async function createComplaints () {
   return await ComplaintModel.create({

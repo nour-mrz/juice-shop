@@ -37,7 +37,7 @@ export class ComplaintComponent implements OnInit {
   public uploader: FileUploader = new FileUploader({
     url: environment.hostServer + '/file-upload',
     authToken: `Bearer ${localStorage.getItem('token')}`,
-    allowedMimeType: ['application/pdf', 'application/xml', 'text/xml', 'application/zip', 'application/x-zip-compressed', 'multipart/x-zip', 'application/yaml', 'application/x-yaml', 'text/yaml', 'text/x-yaml'],
+    allowedMimeType: ['application/pdf', 'application/x-zip' , 'application/zip', 'application/x-zip-compressed'],
     maxFileSize: 100000
   })
 

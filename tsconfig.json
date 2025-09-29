@@ -36,6 +36,6 @@
     "build",
     "vagrant",
     "data/static/codefixes/**",
-    "**/*.d.ts"
+    //"**/*.d.ts"
   ]
 }

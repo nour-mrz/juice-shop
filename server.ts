@@ -666,12 +666,40 @@ restoreOverwrittenFilesWithOriginals().then(() => {
 
   app.use(serveAngularClient())
 
-  /* Error Handling */
-  app.use(verify.errorHandlingChallenge())
-  app.use(errorhandler())
-}).catch((err) => {
-  console.error(err)
+//  Middleware 404
+app.use('*', (req: Request, res: Response) => {
+ res.status(404).json({
+   error: 'Page non trouvée',
+   message: 'La ressource demandée n\'existe pas'
+ })
 })
+
+
+//  Middleware global de gestion d’erreurs
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+ console.error('Erreur interne :', err) // log côté serveur
+
+
+ res.status(500).json({
+   error: 'Erreur interne',
+   message: 'Une erreur est survenue, veuillez réessayer plus tard'
+ })
+})
+ /* Error Handling */
+ app.use(verify.errorHandlingChallenge())
+ app.use(errorhandler())
+}).catch((err) => {
+ console.error(err)
+})
+
+
+
+
+
+
+
+
+
 
 const uploadToMemory = multer({ storage: multer.memoryStorage(), limits: { fileSize: 200000 } })
 const mimeTypeMap: any = {
