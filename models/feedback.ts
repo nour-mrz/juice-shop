@@ -56,15 +56,20 @@ const FeedbackModelInit = (sequelize: Sequelize) => {
         }
       },
       rating: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        set (rating: number) {
-          this.setDataValue('rating', rating)
-          challengeUtils.solveIf(challenges.zeroStarsChallenge, () => {
-            return Number(rating) === 0
-          })
-        }
-      }
+  type: DataTypes.INTEGER,
+  allowNull: false,
+  validate: {
+    min: 1,
+    max: 5,
+    isInt: true
+  },
+  set (rating: number) {
+    this.setDataValue('rating', rating)
+    challengeUtils.solveIf(challenges.zeroStarsChallenge, () => {
+      return Number(rating) === 0
+    })
+  }
+}
     },
     {
       tableName: 'Feedbacks',

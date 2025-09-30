@@ -1,8 +1,3 @@
-/*
- * Copyright (c) 2014-2025 Bjoern Kimminich & the OWASP Juice Shop contributors.
- * SPDX-License-Identifier: MIT
- */
-
 import fs from 'node:fs'
 import crypto from 'node:crypto'
 import { type Request, type Response, type NextFunction } from 'express'
@@ -40,11 +35,7 @@ interface IAuthenticatedUsers {
   updateFrom: (req: Request, user: ResponseWithUser) => any
 }
 
-import * as bcrypt from 'bcrypt';
-
-export const hash = (password: string): string => {
-  return bcrypt.hashSync(password, 12)
-}
+export const hash = (data: string) => crypto.createHash('md5').update(data).digest('hex')
 export const hmac = (data: string) => crypto.createHmac('sha256', 'pa4qacea4VK9t9nGv7yZtwmj').update(data).digest('hex')
 
 export const cutOffPoisonNullByte = (str: string) => {
@@ -127,7 +118,8 @@ function hasValidFormat (coupon: string) {
 // vuln-code-snippet start redirectCryptoCurrencyChallenge redirectChallenge
 export const redirectAllowlist = new Set([
   'https://github.com/juice-shop/juice-shop',
-   'https://www.stickeryou.com/products/owasp-juice-shop/794',
+ 
+  'https://www.stickeryou.com/products/owasp-juice-shop/794',
   'http://leanpub.com/juice-shop'
 ])
 

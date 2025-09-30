@@ -62,6 +62,9 @@ export function login () {
     }
   })
   .catch((error: Error) => next(error))
+
+
+
 }
 
   // vuln-code-snippet end loginAdminChallenge loginBenderChallenge loginJimChallenge
