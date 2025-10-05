@@ -47,3 +47,29 @@ mat-form-field {
   display: flex;
   justify-content: center;
 }
+.text-red-600 {
+  color: #dc2626;
+}
+.text-orange-500 {
+  color: #f97316;
+}
+.text-green-600 {
+  color: #16a34a;
+}
+.password-strength {
+  font-weight: 600;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.strength-weak {
+  color: #ff4d4f; /* rouge */
+}
+
+.strength-medium {
+  color: #ffa500; /* orange */
+}
+
+.strength-strong {
+  color: #00c853; /* vert */
+}

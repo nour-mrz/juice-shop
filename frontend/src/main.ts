@@ -47,7 +47,7 @@ import { NgxTextDiffModule } from '@winarg/ngx-text-diff';
 import { GalleryModule } from 'ng-gallery';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-
+import { HttpClientModule } from '@angular/common/http'
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { Routing } from './app/app.routing';
@@ -90,7 +90,7 @@ if (environment.production) {
 
 bootstrapApplication(AppComponent, {
     providers: [
-        importProvidersFrom(BrowserModule, Routing, TranslateModule.forRoot({
+        importProvidersFrom(BrowserModule, Routing,HttpClientModule, TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,
                 useFactory: HttpLoaderFactory,

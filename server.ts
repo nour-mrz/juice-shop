@@ -48,7 +48,7 @@ import { SecurityAnswerModel } from './models/securityAnswer'
 import { PrivacyRequestModel } from './models/privacyRequests'
 import { SecurityQuestionModel } from './models/securityQuestion'
 import { HintModel } from './models/hint'
-
+import { checkPasswordStrength } from './routes/login'
 import logger from './lib/logger'
 import * as utils from './lib/utils'
 import * as antiCheat from './lib/antiCheat'
@@ -628,6 +628,16 @@ restoreOverwrittenFilesWithOriginals().then(() => {
   app.put('/rest/products/:id/reviews', createProductReviews())
   app.patch('/rest/products/reviews', security.isAuthorized(), updateProductReviews())
   app.post('/rest/products/reviews', security.isAuthorized(), likeProductReviews())
+
+
+
+
+
+const { checkPasswordStrength } = require('./routes/login')
+
+
+app.post('/rest/ml-password-strength', checkPasswordStrength)
+
 
   /* Web3 API endpoints */
   app.post('/rest/web3/submitKey', checkKeys())

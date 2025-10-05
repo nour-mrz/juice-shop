@@ -11,6 +11,7 @@ import { SecurityQuestionService } from '../Services/security-question.service'
 import { Router, RouterLink } from '@angular/router'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { MatSnackBar } from '@angular/material/snack-bar'
+import { HttpClient } from '@angular/common/http'
 
 import { faExclamationCircle, faUserPlus } from '@fortawesome/free-solid-svg-icons'
 import { FormSubmitService } from '../Services/form-submit.service'
@@ -23,7 +24,7 @@ import { MatSelect } from '@angular/material/select'
 import { PasswordStrengthComponent } from '../password-strength/password-strength.component'
 import { PasswordStrengthInfoComponent } from '../password-strength-info/password-strength-info.component'
 import { MatSlideToggle } from '@angular/material/slide-toggle'
-
+import { CommonModule } from '@angular/common'
 import { MatInputModule } from '@angular/material/input'
 import { MatFormFieldModule, MatLabel, MatError, MatHint } from '@angular/material/form-field'
 import { MatCardModule } from '@angular/material/card'
@@ -36,7 +37,7 @@ library.add(faUserPlus, faExclamationCircle)
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss'],
-  imports: [MatCardModule, TranslateModule, MatFormFieldModule, MatLabel, MatInputModule, FormsModule, ReactiveFormsModule, MatError, MatHint, MatSlideToggle, PasswordStrengthComponent, PasswordStrengthInfoComponent, MatSelect, MatOption, MatButtonModule, RouterLink, MatIconModule]
+  imports: [CommonModule,MatCardModule, TranslateModule, MatFormFieldModule, MatLabel, MatInputModule, FormsModule, ReactiveFormsModule, MatError, MatHint, MatSlideToggle, PasswordStrengthComponent, PasswordStrengthInfoComponent, MatSelect, MatOption, MatButtonModule, RouterLink, MatIconModule]
 })
 export class RegisterComponent implements OnInit {
   public emailControl: UntypedFormControl = new UntypedFormControl('', [Validators.required, Validators.email])
@@ -47,6 +48,8 @@ export class RegisterComponent implements OnInit {
   public securityQuestions!: SecurityQuestion[]
   public selected?: number
   public error: string | null = null
+public passwordStrength: string | null = null
+public isCheckingStrength = false
 
   constructor (private readonly securityQuestionService: SecurityQuestionService,
     private readonly userService: UserService,
@@ -56,7 +59,8 @@ export class RegisterComponent implements OnInit {
     private readonly translateService: TranslateService,
     private readonly snackBar: MatSnackBar,
     private readonly snackBarHelperService: SnackBarHelperService,
-    private readonly ngZone: NgZone) { }
+    private readonly ngZone: NgZone,
+   private readonly http: HttpClient) { }
 
   ngOnInit (): void {
     this.securityQuestionService.find(null).subscribe({
@@ -68,6 +72,74 @@ export class RegisterComponent implements OnInit {
 
     this.formSubmitService.attachEnterKeyHandler('registration-form', 'registerButton', () => { this.save() })
   }
+ /* checkPasswordStrength (): void {
+  const password = this.passwordControl.value
+  if (!password) {
+    this.passwordStrength = null
+    return
+  }
+
+  this.isCheckingStrength = true
+  this.http.post<any>('/rest/ml-password-strength', { password }).subscribe({
+    next: (res) => {console.log('Réponse du serveur ML:', res); // ✅ affiche la réponse dans la console navigateur
+     
+      this.passwordStrength = res.strength || res.strengths?.[0] || 'inconnue'
+      this.isCheckingStrength = false
+    },
+    error: (err) => {
+      console.error('Erreur lors de la vérification ML:', err)
+      this.passwordStrength = 'erreur'
+      this.isCheckingStrength = false
+    }
+  })
+}*/
+checkPasswordStrength(): void {
+  const password = this.passwordControl.value;
+  if (!password) {
+    this.passwordStrength = null;
+    return;
+  }
+
+  this.isCheckingStrength = true;
+
+  this.http.post<any>('/rest/ml-password-strength', { password }).subscribe({
+    next: (res) => {
+      
+      //  Force Angular à rafraîchir la vue
+      this.ngZone.run(() => {
+        this.passwordStrength =
+          res.strengths?.[0] ||
+          res.strength ||
+          res.label?.[0] ||
+          'inconnue';
+        this.isCheckingStrength = false;
+      });
+    },
+    error: (err) => {
+      console.error(' Erreur ML:', err);
+      this.ngZone.run(() => {
+        this.passwordStrength = 'erreur';
+        this.isCheckingStrength = false;
+      });
+    }
+  });
+}
+
+
+getColor(strength: string): string {
+  switch (strength) {
+    case 'très_faible':
+    case 'faible':
+      return 'warn'   // rouge
+    case 'moyen':
+      return 'accent' // orange
+    case 'fort':
+      return 'primary' // vert/bleu
+    default:
+      return 'primary'
+  }
+}
+
 
   save () {
     const user = {

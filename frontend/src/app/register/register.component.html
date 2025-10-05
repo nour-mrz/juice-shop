@@ -27,9 +27,11 @@
 
           <mat-form-field appearance="outline" color="accent">
             <mat-label translate>LABEL_PASSWORD</mat-label>
-            <input #password id="passwordControl" [formControl]="passwordControl" (focus)="this.error=null" type="password"
+            <input #password id="passwordControl" [formControl]="passwordControl" (focus)="this.error=null" (input)="checkPasswordStrength()" type="password"
               matInput aria-label="Field for the password">
-              <mat-hint translate>
+              
+
+              <!--<mat-hint translate>
                 <i class="fas fa-exclamation-circle"></i>
                 <em style="margin-left:5px;" translate>{{ 'INVALID_PASSWORD_LENGTH' | translate: {length: '5-40'} }}</em>
               </mat-hint>
@@ -42,8 +44,31 @@
                 <mat-error
                   translate [translateParams]="{length: '5-40'}">INVALID_PASSWORD_LENGTH
                 </mat-error>
-              }
+              } -->
             </mat-form-field>
+            <!-- Indicateur de force du mot de passe -->
+
+
+<p
+  [ngStyle]="{
+    'color': passwordStrength === 'fort' ? '#00c853' :
+              passwordStrength === 'moyen' ? '#ffa500' :
+              (passwordStrength === 'faible' || passwordStrength === 'très_faible') ? '#ff4d4f' :
+              '#2196f3',
+    'font-weight': '600',
+    'font-size': '14px',
+    'margin-top': '8px',
+    'padding': '6px 10px',
+    'border-radius': '6px',
+    'background': '#222',
+    'display': 'inline-block',
+    'box-shadow': '0 0 6px currentColor'
+  }"
+>
+  🔒 Force du mot de passe : {{ passwordStrength }}
+</p>
+
+
 
             <mat-form-field appearance="outline" color="accent">
               <mat-label translate>LABEL_PASSWORD_REPEAT</mat-label>
@@ -62,10 +87,10 @@
                 }
               </mat-form-field>
 
-              <mat-slide-toggle #passwordInfoToggle [color]="passwordStrength.color">{{'SHOW_PASSWORD_ADVICE' | translate}}</mat-slide-toggle>
-              <app-password-strength #passwordStrength [password]="password.value"></app-password-strength>
+              <mat-slide-toggle #passwordInfoToggle [color]="getColor(passwordStrength)">{{'SHOW_PASSWORD_ADVICE' | translate}}</mat-slide-toggle>
+              <app-password-strength #strengthMeter  [password]="password.value"></app-password-strength>
               @if (passwordInfoToggle.checked) {
-                <app-password-strength-info [passwordComponent]="passwordStrength"
+                <app-password-strength-info [passwordComponent]="strengthMeter"
                   [lowerCaseCriteriaMsg]="'LOWER_CASE_CRITERIA_MSG' | translate"
                   [upperCaseCriteriaMsg]="'UPPER_CASE_CRITERIA_MSG'| translate"
                   [digitsCriteriaMsg]="'DIGITS_CRITERIA_MSG'| translate"

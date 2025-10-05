@@ -78,4 +78,8 @@ export class UserService {
   upgradeToDeluxe (paymentMode: string, paymentId: any) {
     return this.http.post(this.hostServer + '/rest/deluxe-membership', { paymentMode, paymentId }).pipe(map((response: any) => response.data), catchError((err) => { throw err }))
   }
+  predictPasswordStrength(password: string) {
+  return this.http.post<any>('/rest/ml-password-strength', { password });
+}
+
 }

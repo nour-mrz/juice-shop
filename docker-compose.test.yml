@@ -1,8 +1,19 @@
+version: "3.9"
+
 services:
-  sut:
-    build: ./test/smoke/
-    links:
-      - app
   app:
-    image: bkimminich/juice-shop:latest
-    build: ./
+    build: .               # construit Juice Shop à partir de ton Dockerfile
+    container_name: juice-shop
+    ports:
+      - "3000:3000"
+    depends_on:
+      - ml-service
+    environment:
+      - ML_URL=http://ml-service:5000/predict
+    # tu peux aussi ajouter tes variables d’env si besoin
+
+  ml-service:
+    build: ./ml_service     # va chercher le Dockerfile de Flask dans ml_service/
+    container_name: ml-service
+    ports:
+      - "5000:5000"

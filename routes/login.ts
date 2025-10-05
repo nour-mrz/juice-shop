@@ -14,6 +14,7 @@ import * as models from '../models/index'
 import { type User } from '../data/types'
 import * as utils from '../lib/utils'
 
+
 // vuln-code-snippet start loginAdminChallenge loginBenderChallenge loginJimChallenge
 export function login () {
   function afterLogin (user: { data: User, bid: number }, res: Response, next: NextFunction) {
@@ -93,5 +94,33 @@ export function login () {
         throw new Error('Unable to verify challenges! Try again')
       })
     }
+  }
+}
+
+
+
+
+import fetch from 'node-fetch'
+import { type Request, type Response } from 'express'
+
+export const checkPasswordStrength = async (req: Request, res: Response) => {
+  const { password } = req.body
+
+  try {
+    console.log("🔹 Envoi au service ML :", password)
+
+    const response = await fetch('http://ml-service:5000/predict', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password })
+    })
+
+    const data = await response.json()
+    
+
+    res.json(data)
+  } catch (err) {
+    
+    res.status(500).json({ error: 'Service ML non disponible' })
   }
 }
